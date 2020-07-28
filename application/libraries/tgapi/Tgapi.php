@@ -28,7 +28,9 @@ class TGApi {
 
 	public function getFile($data)
 	{
-		return $this->_curl('getFile', $data);
+		$file_path = json_decode($this->_curl('getFile', $data))->result->file_path;
+	    return unserialize($this->_downloadFile($file_path));
+
 	}
 
 	private function _curl($method, $postfields)
@@ -54,5 +56,11 @@ class TGApi {
 		curl_close($ch);
 		return $result;
 	}
+
+    private function _downloadFile($file_path)
+    {
+        $url = 'https://api.telegram.org/file/bot' . $this->token . '/' . $file_path;
+        return file_get_contents($url);
+    }
 
 }

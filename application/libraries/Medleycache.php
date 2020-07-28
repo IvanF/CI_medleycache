@@ -47,14 +47,13 @@ class Medleycache
 		}
 
 		$cachedData = $this->_getFromTelegram($fileKey);
-		die(var_dump($cachedData));
-		if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl'])
+
+		if ($cachedData['ttl'] > 0 && time() > $cachedData['time'] + $cachedData['ttl'])
 		{
 			$this->CI->cache->delete($cachekey);
 			return FALSE;
 		}
-		die(var_dump($data));
-		return $data;
+		return $cachedData['data'];
 	}
 	/*
 	 * Saves file to Telegram
@@ -73,8 +72,7 @@ class Medleycache
 	private function _getFromTelegram($fileKey)
 	{
 		if($fileKey) {
-			$answer = $this->telegram->getFile(['file_id' => $fileKey]);
-			return $answer;
+			return $this->telegram->getFile(['file_id' => $fileKey]);
 		}
 		return false;
 	}
