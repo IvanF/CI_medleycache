@@ -29,8 +29,10 @@ class Welcome extends CI_Controller {
 	{
 		$key = 'abracadabra';
 		$data = 'blo';
-		$ret = $this->medleycache->save($key, $data);
-		die(var_dump($ret));
+		if (!$cachedData = $this->medleycache->get($key)) {
+			$this->medleycache->save($key, $data);
+		}
+		die(var_dump($cachedData));
 		$this->load->view('welcome_message');
 	}
 }

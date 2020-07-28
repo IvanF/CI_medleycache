@@ -4,44 +4,17 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class TGApi {
 
     private $token;
+	private $api_url = 'https://api.telegram.org/file/bot';
 
     function __construct($token = null)
     {
         $this->token = $token;
     }
 
-    public function getFile($data)
-    {
-		return $this->_curl('getFile', $data);
-    }
-
-    public function sendDocument($data)
-    {
-		//return $this->_curl('sendDocument', $data);
-
-		$url = 'https://api.telegram.org/bot' . $this->token . '/sendDocument';
-		$ch = curl_init($url);
-		//curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt ($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.17) Gecko/2009122116 Firefox/3.0.17");
-
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			"Content-Type:multipart/form-data"
-		));
-
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-
-		// Указываем CURL, что будем отправлять POST запрос
-		curl_setopt($ch, CURLOPT_POST, true);
-
-		// Передаем массив с полями формы, где field1, field2 - имена тегов, а value1, value2 - значения тегов
-		curl_setopt($ch, CURLOPT_POSTFIELDS, array('chat_id'   => $data['chat_id'], 'document' => new CURLFile($data['document'])));
-
-		$result = curl_exec($ch); // выполняем запрос curl
-
-		curl_close($ch);
-
-		return json_decode($result);
-    }
+	public function sendDocument($data)
+	{
+		return json_decode($this->_curl('sendDocument', $data));
+	}
 
 	public function sendMessage($data)
 	{
@@ -53,6 +26,11 @@ class TGApi {
 		return $this->_curl('getMessage', $data);
 	}
 
+	public function getFile($data)
+	{
+		return $this->_curl('getFile', $data);
+	}
+
 	private function _curl($method, $postfields)
 	{
 		foreach ($postfields as $key => $val) {
@@ -61,7 +39,9 @@ class TGApi {
 				$postfields[$key] = $val;
 			}
 		}
+
 		$url = 'https://api.telegram.org/bot' . $this->token . '/' . $method;
+		//die(var_dump($url));
 		$ch = curl_init($url);
 		curl_setopt ($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.17) Gecko/2009122116 Firefox/3.0.17");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -72,7 +52,7 @@ class TGApi {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
 		$result = curl_exec($ch);
 		curl_close($ch);
-		die(var_dump($result));
-		return json_decode($result);
+		return $result;
 	}
+
 }
