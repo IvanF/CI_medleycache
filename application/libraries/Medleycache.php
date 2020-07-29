@@ -10,8 +10,8 @@ class Medleycache
 	{
 		$CI =& get_instance();
 		$this->CI = $CI;
-		$this->CI->load->driver('cache', array('adapter' => 'file', 'backup' => 'file'));
 		$this->CI->load->config('medleycache');
+		$this->CI->load->driver('cache', array('adapter' => $this->CI->config->item('metacache'), 'backup' => 'dummy'));
 		$this->CI->load->library(['tgapi/Tgapi']);
 		$this->token = $this->CI->config->item('telegram')['bot']['token'];
 		$this->chat_id = $this->CI->config->item('telegram')['channel'];
@@ -25,10 +25,9 @@ class Medleycache
 			'ttl'		=> $ttl,
 			'data'		=> $data
 		);
-
 		if ($msg = $this->_saveToTelegram(serialize($contents))){
 			if($msg->ok){
-				$this->CI->cache->save($cachekey, $msg->result->document->file_id);
+				$this->CI->cache->save($cachekey, $msg->result->document->file_id, $ttl);
 				return TRUE;
 			}
 			else{
@@ -45,9 +44,7 @@ class Medleycache
 		{
 			return FALSE;
 		}
-
 		$cachedData = $this->_getFromTelegram($fileKey);
-
 		if ($cachedData['ttl'] > 0 && time() > $cachedData['time'] + $cachedData['ttl'])
 		{
 			$this->CI->cache->delete($cachekey);

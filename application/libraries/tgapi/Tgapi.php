@@ -41,9 +41,7 @@ class TGApi {
 				$postfields[$key] = $val;
 			}
 		}
-
 		$url = 'https://api.telegram.org/bot' . $this->token . '/' . $method;
-		//die(var_dump($url));
 		$ch = curl_init($url);
 		curl_setopt ($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.17) Gecko/2009122116 Firefox/3.0.17");
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
