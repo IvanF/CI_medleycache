@@ -39,4 +39,4 @@ if (!$cachedData = $this->medleycache->get($key)) {
 }
 ```
 
-As you can see it's simple as usual CI cache.
+As you can see it's as simple as usual CI cache.
